@@ -16,12 +16,12 @@ function SaluteCard({
   onRemove: () => void;
 }) {
   return (
-    <Card>
-      <Paragraph>{children}</Paragraph>
+    <CardWrapper>
       <Button danger onClick={onRemove}>
         삭제
       </Button>
-    </Card>
+      <Paragraph>{children}</Paragraph>
+    </CardWrapper>
   );
 }
 
@@ -124,5 +124,21 @@ const Row = styled.div`
 
   & > * {
     margin-right: 16px;
+  }
+`;
+
+const CardWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  width: 100%;
+  padding: 8px;
+
+  & > * {
+    margin-right: 16px;
+  }
+  & > div {
+    margin-bottom: 0;
   }
 `;
