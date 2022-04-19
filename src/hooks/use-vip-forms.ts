@@ -53,15 +53,21 @@ export const useVipForms = () => {
     const closing = [...closings].sort(() => Math.random() - 0.5)[0];
 
     setVipForms((prev) =>
-      prev.map((v) =>
-        v.member.id === memberId
-          ? {
-              ...v,
-              latestMemo: memo,
-              message: `${greeting}\n\n${memo}\n\n${closing}`,
-            }
-          : v
-      )
+      prev.map((v) => {
+        if (v.member.id === memberId) {
+          const firstname = v.member.name.slice(1);
+
+          return {
+            ...v,
+            latestMemo: memo,
+            message: `${firstname}${greeting}\n\n${memo
+              .replace(/^(\<\d+월\s.+\s주\s피드백\>\n)/, "")
+              .replace(firstname + "\n", "")}\n\n${closing}`,
+          };
+        }
+
+        return v;
+      })
     );
   };
 
