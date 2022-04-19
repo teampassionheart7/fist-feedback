@@ -44,6 +44,11 @@ jobs:
         if: steps.node-cache.outputs.cache-hit != 'true'
         run: yarn install
 
+      - name: make .env
+        run: |
+          touch .env
+          echo "${{ secrets.ENV }}" >> .env
+
       - name: Build
         run: yarn build
 
