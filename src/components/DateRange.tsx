@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 
 import {
   endDateState,
-  bookingListState,
+  vipsState,
   startDateState,
   accessTokenState,
 } from "@/store";
@@ -21,7 +21,7 @@ export function DateRange() {
   const [startDate, setStartDate] = useRecoilState(startDateState);
   const [endDate, setEndDate] = useRecoilState(endDateState);
 
-  const [_, setBookingList] = useRecoilState(bookingListState);
+  const [_, setVips] = useRecoilState(vipsState);
 
   const handleRangeChange = (([start, end]: [string, string]) => {
     setStartDate(dayjs(start).format("YYYY-MM-DD"));
@@ -34,12 +34,12 @@ export function DateRange() {
       return;
     }
 
-    const res = await StudioMateService.loadAttendBookings(
+    const res = await StudioMateService.getVips(
       startDate!,
       endDate!,
       accessToken!
     );
-    setBookingList(res.data);
+    setVips(res);
   };
 
   return (

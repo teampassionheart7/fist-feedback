@@ -1,5 +1,6 @@
-import { Booking } from "@/types";
 import { atom } from "recoil";
+
+import { Member } from "@/types";
 
 export const accessTokenState = atom<string | null>({
   key: "accessToken",
@@ -16,7 +17,7 @@ export const endDateState = atom<string | null>({
   default: null,
 });
 
-export const bookingListState = atom<Booking[]>({
-  key: "bookingList",
+export const vipsState = atom<Member[]>({
+  key: "vips",
   default: [],
 });

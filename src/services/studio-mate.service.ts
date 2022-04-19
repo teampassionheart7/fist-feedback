@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { Booking } from "@/types";
+import { Booking, Member } from "@/types";
 
 export type StudioMateLoginResult = {
   access_token: string;
@@ -42,8 +42,17 @@ class StudioMateService {
     return data.access_token;
   }
 
-  async loadAttendBookings(startDate: string, endDate: string, token: string) {
-    const { data } = await axios.get<{ bookings: ListResult<Booking> }>(
+  /** 입력된 기간동안 3번 이상 출석한 회원의 목록을 반환합니다. */
+  async getVips(
+    startDate: string,
+    endDate: string,
+    token: string
+  ): Promise<Member[]> {
+    const {
+      data: {
+        bookings: { data: bookings },
+      },
+    } = await axios.get<{ bookings: ListResult<Booking> }>(
       `https://api.studiomate.kr/staff/booking?start_date=${startDate}&end_date=${endDate}&page=0&limit=1000&status=attendance`,
       {
         headers: {
@@ -51,7 +60,23 @@ class StudioMateService {
         },
       }
     );
-    return data.bookings;
+    const attenders = bookings
+      .filter((v) => v.status === "attendance")
+      .map((v) => v.member);
+
+    const countMap = new Map<number, number>();
+    const vips: Member[] = [];
+    attenders.forEach((member) => {
+      const count = countMap.get(member.id) ?? 0;
+      if (count >= 3 && !vips.find((v) => v.id === member.id)) {
+        vips.push(member);
+        return;
+      }
+
+      countMap.set(member.id, count + 1);
+    });
+
+    return vips;
   }
 }
 
