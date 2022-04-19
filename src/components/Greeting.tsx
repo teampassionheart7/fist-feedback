@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export function Greeting() {
   return (
-    <>
+    <Wrapper>
       <h1>
         Welcome to <Em>FIST FEEDBACK!</Em>
       </h1>
@@ -14,9 +14,13 @@ export function Greeting() {
           </a>
         </li>
       </ul>
-    </>
+    </Wrapper>
   );
 }
+
+const Wrapper = styled.div`
+  margin-bottom: 48px;
+`;
 
 const Em = styled.em`
   font-style: normal;
