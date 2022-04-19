@@ -1,12 +1,12 @@
 import { Button } from "antd";
 import styled from "styled-components";
 
+import { Greeting } from "@/components";
+
 export default function HomePage() {
   return (
     <Main>
-      <h1>
-        Welcome to <a href="https://nextjs.org">Next.js!</a>
-      </h1>
+      <Greeting />
       <Button>하이하이</Button>
     </Main>
   );
