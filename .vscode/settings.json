@@ -1,6 +1,7 @@
 {
     "conventionalCommits.scopes": [
-        "components"
+        "components",
+        "services"
     ],
     "editor.formatOnSave": true
 }
