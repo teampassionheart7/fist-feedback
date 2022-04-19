@@ -44,7 +44,6 @@ export function DateRange() {
 
   return (
     <>
-      <Title level={3}>탐색할 기간을 입력해주세요.</Title>
       <Row>
         <RangePicker onChange={handleRangeChange} />
         <Button type="primary" disabled={!startDate || !endDate} onClick={load}>

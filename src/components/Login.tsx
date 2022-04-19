@@ -40,7 +40,6 @@ export function Login() {
 
   return (
     <Wrapper>
-      <Title level={3}>먼저 스튜디오메이트 계정정보를 입력해주세요.</Title>
       <Input
         placeholder="스튜디오메이트 ID"
         value={identity}

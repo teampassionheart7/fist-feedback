@@ -27,6 +27,7 @@ type VipForm = {
   latestMemo: string;
   /** 전송될 메세지 */
   message: string;
+  submitted: boolean;
 };
 export const vipFormsState = atom<VipForm[]>({
   key: "vipForms",

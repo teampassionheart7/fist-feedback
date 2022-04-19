@@ -79,11 +79,16 @@ class StudioMateService {
     return vips;
   }
 
-  async getLatestMemo(memberId: number): Promise<Memo | null> {
+  async getLatestMemo(memberId: number, token: string): Promise<string | null> {
     const { data } = await axios.get<Memo[]>(
-      `https://api.studiomate.kr/v2/staff/memo?ref_type=member&ref_id=${memberId}`
+      `https://api.studiomate.kr/v2/staff/memo?ref_type=member&ref_id=${memberId}`,
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
     );
-    return data.length > 0 ? data.sort((a, b) => b.id - a.id)[0] : null;
+    return data.length > 0 ? data.sort((a, b) => b.id - a.id)[0].memo : null;
   }
 }
 
