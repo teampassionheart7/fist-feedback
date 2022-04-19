@@ -1,8 +1,7 @@
-import { Button } from "antd";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
-import { Greeting, Login } from "@/components";
+import { Greeting, Login, DateRange } from "@/components";
 
 import { accessTokenState } from "@/store";
 
@@ -13,8 +12,11 @@ export default function HomePage() {
     <Main>
       <Greeting />
       {accessToken == null && <Login />}
-      {accessToken != null && <>{accessToken}</>}
-      <Button>하이하이</Button>
+      {accessToken == null && (
+        <>
+          <DateRange />
+        </>
+      )}
     </Main>
   );
 }

@@ -4,3 +4,13 @@ export const accessTokenState = atom<string | null>({
   key: "accessToken",
   default: null,
 });
+
+export const startDateState = atom<string | null>({
+  key: "startDate",
+  default: null,
+});
+
+export const endDateState = atom<string | null>({
+  key: "endDate",
+  default: null,
+});
