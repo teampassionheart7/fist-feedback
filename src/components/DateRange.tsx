@@ -1,5 +1,5 @@
 import { useRecoilState, useRecoilValue } from "recoil";
-import { Button, DatePicker, message, Typography } from "antd";
+import { Button, DatePicker, message } from "antd";
 import styled from "styled-components";
 import dayjs from "dayjs";
 
@@ -8,15 +8,17 @@ import {
   vipsState,
   startDateState,
   accessTokenState,
+  greetingsState,
+  closingsState,
 } from "@/store";
 import { StudioMateService } from "@/services";
-
-const { Title } = Typography;
 
 const { RangePicker } = DatePicker;
 
 export function DateRange() {
   const accessToken = useRecoilValue(accessTokenState);
+  const greetings = useRecoilValue(greetingsState);
+  const closings = useRecoilValue(closingsState);
 
   const [startDate, setStartDate] = useRecoilState(startDateState);
   const [endDate, setEndDate] = useRecoilState(endDateState);
@@ -29,6 +31,10 @@ export function DateRange() {
   }) as any;
 
   const load = async () => {
+    if (!greetings.length || !closings.length) {
+      message.error("인사말과 맺음말을 1개 이상 추가해주세요.");
+      return;
+    }
     if (!startDate || !endDate) {
       message.error("시작일/종료일을 입력해주세요.");
       return;

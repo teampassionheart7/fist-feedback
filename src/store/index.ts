@@ -36,10 +36,10 @@ export const vipFormsState = atom<VipForm[]>({
 
 export const greetingsState = atom<string[]>({
   key: "greetings",
-  default: ["오늘도 열심히!", "FIT YOUR LIFESTYLE!"],
+  default: [],
 });
 
 export const closingsState = atom<string[]>({
   key: "closings",
-  default: ["화이팅!", "바이바이!"],
+  default: [],
 });

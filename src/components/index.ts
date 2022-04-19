@@ -1,4 +1,4 @@
 export * from "./DateRange";
-export * from "./Greeting";
+export * from "./Salutes";
 export * from "./Login";
 export * from "./Vips";

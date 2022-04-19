@@ -1,7 +1,7 @@
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
-import { Greeting, Login, DateRange } from "@/components";
+import { Login, Salutes, DateRange, Vips } from "@/components";
 
 import { accessTokenState } from "@/store";
 
@@ -10,11 +10,12 @@ export default function HomePage() {
 
   return (
     <Main>
-      <Greeting />
       {accessToken == null && <Login />}
       {accessToken != null && (
         <>
+          <Salutes />
           <DateRange />
+          <Vips />
         </>
       )}
     </Main>
