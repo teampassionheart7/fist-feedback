@@ -12,7 +12,7 @@ export default function HomePage() {
     <Main>
       <Greeting />
       {accessToken == null && <Login />}
-      {accessToken == null && (
+      {accessToken != null && (
         <>
           <DateRange />
         </>
