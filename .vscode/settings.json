@@ -1,7 +1,8 @@
 {
     "conventionalCommits.scopes": [
         "components",
-        "services"
+        "services",
+        "hooks"
     ],
     "editor.formatOnSave": true
 }
