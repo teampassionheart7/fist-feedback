@@ -1,15 +1,18 @@
-import type { NextPage } from "next";
+import { Button } from "antd";
+import styled from "styled-components";
 
-const Home: NextPage = () => {
+export default function HomePage() {
   return (
-    <div>
-      <main>
-        <h1>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-      </main>
-    </div>
+    <Main>
+      <h1>
+        Welcome to <a href="https://nextjs.org">Next.js!</a>
+      </h1>
+      <Button>하이하이</Button>
+    </Main>
   );
-};
+}
 
-export default Home;
+const Main = styled.main`
+  width: 100%;
+  padding: 24px;
+`;
