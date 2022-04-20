@@ -91,6 +91,31 @@ class StudioMateService {
     );
     return data.length > 0 ? data.sort((a, b) => b.id - a.id)[0].memo : null;
   }
+
+  async sendMessage(
+    memberId: number,
+    title: string,
+    message: string,
+    token: string
+  ) {
+    await axios.post(
+      "https://api.studiomate.kr/staff/studio_message",
+      {
+        studio_message: {
+          body: message,
+          member_filter: {},
+          send_on: "",
+          targets: [{ studio_user_id: memberId }],
+          title,
+        },
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  }
 }
 
 export default new StudioMateService();
