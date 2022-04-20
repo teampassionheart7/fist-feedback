@@ -40,6 +40,7 @@ export function DateRange() {
       return;
     }
 
+    message.info("입력된 기간 내에 3회 이상 출석한 회원 목록을 가져옵니다.");
     const res = await StudioMateService.getVips(
       startDate!,
       endDate!,
