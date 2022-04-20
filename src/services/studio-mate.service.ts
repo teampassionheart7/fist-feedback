@@ -53,7 +53,7 @@ class StudioMateService {
         bookings: { data: bookings },
       },
     } = await axios.get<{ bookings: ListResult<Booking> }>(
-      `https://api.studiomate.kr/staff/booking?start_date=${startDate}&end_date=${endDate}&page=0&limit=1000&status=attendance`,
+      `https://api.studiomate.kr/staff/booking?start_date=${startDate}&end_date=${endDate}&page=0&limit=999999&status=attendance`,
       {
         headers: {
           authorization: `Bearer ${token}`,
