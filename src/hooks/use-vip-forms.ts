@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 import { StudioMateService } from "@/services";
@@ -23,6 +23,7 @@ export const useVipForms = () => {
   const isEmpty = vipForms.length === 0;
   const isLoadingMemo =
     !isEmpty && vipForms.filter((v) => v.latestMemo == null).length > 0;
+  const [isSubmitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     setVipForms(
@@ -31,6 +32,7 @@ export const useVipForms = () => {
         latestMemo: null,
         message: null,
         submitted: false,
+        submitting: false,
       }))
     );
     loadMemos(vips);
@@ -77,7 +79,9 @@ export const useVipForms = () => {
     );
   };
 
-  const submit = async (memberId: number) => {};
+  const submitAll = async (title: string) => {};
+
+  const submit = async (title: string, memberId: number) => {};
 
   return {
     vipForms,
@@ -85,5 +89,8 @@ export const useVipForms = () => {
     isLoadingMemo,
     onLoadMemo,
     setMessage,
+    submitAll,
+    submit,
+    isSubmitting,
   };
 };

@@ -1,70 +1,120 @@
-import { Button, Empty, Spin } from "antd";
+import { useRecoilState } from "recoil";
+import { Button, Empty, Input, Spin, Tooltip } from "antd";
 import styled from "styled-components";
 
 import { useVipForms } from "@/hooks";
+import { titleState } from "@/store";
 
 export function Vips() {
-  const { vipForms, isEmpty, isLoadingMemo, setMessage } = useVipForms();
+  const [title, setTitle] = useRecoilState(titleState);
+  const {
+    vipForms,
+    isEmpty,
+    isLoadingMemo,
+    setMessage,
+    submitAll,
+    submit,
+    isSubmitting,
+  } = useVipForms();
 
   return (
-    <Table>
-      <thead>
-        <tr>
-          <th>이름</th>
-          <th>최신 피드백</th>
-          <th>전송할 메세지</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {isEmpty ||
-          (isLoadingMemo && (
-            <tr>
-              <td colSpan={3}>
-                <SymbolWrapper>
-                  {isEmpty && (
-                    <>
-                      <Empty />
-                      불러온 데이터가 없습니다.
-                    </>
-                  )}
-                  {isLoadingMemo && (
-                    <>
-                      <Spin size="large" />
-                      회원별 최신 메모를 불러오고 있습니다 ... (
-                      {vipForms.filter((v) => v.latestMemo).length} /{" "}
-                      {vipForms.length})
-                    </>
-                  )}
-                </SymbolWrapper>
-              </td>
-            </tr>
-          ))}
-        {!isEmpty &&
-          !isLoadingMemo &&
-          vipForms.map((form) => (
-            <tr key={form.member.id}>
-              <td>{form.member.name}</td>
-              <td>
-                <MemoWrapper>{form.latestMemo}</MemoWrapper>
-              </td>
-              <td>
-                <MessageArea
-                  value={form.message}
-                  onChange={(e) => setMessage(form.member.id, e.target.value)}
-                />
-              </td>
-              <td>
-                <Button type="primary" disabled={form.submitted}>
-                  전송
-                </Button>
-              </td>
-            </tr>
-          ))}
-      </tbody>
-    </Table>
+    <>
+      <Row>
+        <Input
+          placeholder="전송할 알림 제목을 입력해주세요."
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          style={{ width: "264px" }}
+        />
+        <Tooltip title="입력한 제목을 메세지가 포함하는 건만 전송합니다.">
+          <Button
+            onClick={() => submitAll(title)}
+            disabled={!title || !isEmpty || !isLoadingMemo}
+            loading={isSubmitting}
+          >
+            일괄전송
+          </Button>
+        </Tooltip>
+      </Row>
+      <Table>
+        <thead>
+          <tr>
+            <th>이름</th>
+            <th>최신 피드백</th>
+            <th>전송할 메세지</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {isEmpty ||
+            (isLoadingMemo && (
+              <tr>
+                <td colSpan={3}>
+                  <SymbolWrapper>
+                    {isEmpty && (
+                      <>
+                        <Empty />
+                        불러온 데이터가 없습니다.
+                      </>
+                    )}
+                    {isLoadingMemo && (
+                      <>
+                        <Spin size="large" />
+                        회원별 최신 메모를 불러오고 있습니다 ... (
+                        {vipForms.filter((v) => v.latestMemo).length} /{" "}
+                        {vipForms.length})
+                      </>
+                    )}
+                  </SymbolWrapper>
+                </td>
+              </tr>
+            ))}
+          {!isEmpty &&
+            !isLoadingMemo &&
+            vipForms.map((form) => (
+              <tr key={form.member.id}>
+                <td>{form.member.name}</td>
+                <td>
+                  <MemoWrapper>{form.latestMemo}</MemoWrapper>
+                </td>
+                <td>
+                  <MessageArea
+                    value={form.message}
+                    onChange={(e) => setMessage(form.member.id, e.target.value)}
+                    style={{
+                      backgroundColor: form.latestMemo.includes(title)
+                        ? "#d8f2bd"
+                        : "#f0bba8",
+                    }}
+                  />
+                </td>
+                <td>
+                  <Button
+                    type="primary"
+                    disabled={form.submitted}
+                    loading={isSubmitting || form.submitting}
+                  >
+                    {form.submitted ? "전송됨" : "전송"}
+                  </Button>
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </Table>
+    </>
   );
 }
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  margin: 16px 0;
+
+  & > * {
+    margin-right: 16px;
+  }
+`;
 
 const Table = styled.table`
   width: 100%;

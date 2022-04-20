@@ -28,6 +28,7 @@ type VipForm = {
   /** 전송될 메세지 */
   message: string;
   submitted: boolean;
+  submitting: boolean;
 };
 export const vipFormsState = atom<VipForm[]>({
   key: "vipForms",
@@ -42,4 +43,9 @@ export const greetingsState = atom<string[]>({
 export const closingsState = atom<string[]>({
   key: "closings",
   default: [],
+});
+
+export const titleState = atom<string | null>({
+  key: "title",
+  default: null,
 });
