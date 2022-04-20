@@ -92,7 +92,7 @@ export function Vips() {
                 <td>
                   <Button
                     type="primary"
-                    disabled={form.submitted}
+                    disabled={!title || form.submitted}
                     loading={isSubmitting || form.submitting}
                     onClick={() => submit(title, form.member.id, true)}
                   >
