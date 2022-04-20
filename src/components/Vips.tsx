@@ -28,6 +28,7 @@ export function Vips() {
         />
         <Tooltip title="입력한 제목을 메세지가 포함하는 건만 전송합니다.">
           <Button
+            type="primary"
             onClick={() => submitAll(title)}
             disabled={!title || isEmpty || isLoadingMemo}
             loading={isSubmitting}
