@@ -1,26 +1,30 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { Alert, Button, Card, message, Typography } from "antd";
+import { Alert, Button, Input, message, Modal, Typography } from "antd";
 import styled from "styled-components";
 
 import { UpstashService } from "@/services";
 import { closingsState, greetingsState } from "@/store";
 
 const { Title, Paragraph } = Typography;
+const { TextArea } = Input;
 
 function SaluteCard({
   children,
+  onEdit,
   onRemove,
 }: {
   children: string;
+  onEdit: () => void;
   onRemove: () => void;
 }) {
   return (
     <CardWrapper>
+      <Button onClick={onEdit}>수정</Button>
       <Button danger onClick={onRemove}>
         삭제
       </Button>
-      <Paragraph>{children}</Paragraph>
+      <Paragraph style={{ whiteSpace: "pre-wrap" }}>{children}</Paragraph>
     </CardWrapper>
   );
 }
@@ -29,6 +33,68 @@ export function Salutes() {
   const [greetings, setGreetings] = useRecoilState(greetingsState);
   const [closings, setClosings] = useRecoilState(closingsState);
 
+  const [modalState, setModalState] = useState<{
+    type: "greeting" | "closing";
+    editIndex: number;
+    isOpen: boolean;
+    text: string;
+  }>({
+    type: null,
+    editIndex: null,
+    isOpen: false,
+    text: null,
+  });
+
+  const open = (type: "greeting" | "closing", editIndex?: number) => () => {
+    setModalState({
+      type,
+      isOpen: true,
+      editIndex: editIndex ?? null,
+      text:
+        editIndex != null
+          ? (type === "greeting" ? greetings : closings)[editIndex]
+          : "",
+    });
+  };
+  const close = () => {
+    setModalState({ type: null, isOpen: false, text: null, editIndex: null });
+  };
+  const handleModalTextChange = (text: string) => {
+    setModalState((prev) => ({ ...prev, text }));
+  };
+  const ok = async () => {
+    const { type, text } = modalState;
+
+    if (!text) {
+      message.warning("내용을 입력하세요.");
+      return;
+    }
+
+    if (type === "greeting") {
+      const editIndex = modalState.editIndex ?? greetings.length;
+
+      const newGreetings = [
+        ...greetings.slice(0, editIndex),
+        text,
+        ...greetings.slice(editIndex + 1),
+      ];
+      await UpstashService.saveGreetings(newGreetings);
+      setGreetings(newGreetings);
+    } else {
+      const editIndex = modalState.editIndex ?? closings.length;
+      const newClosings = [
+        ...closings.slice(0, editIndex),
+        text,
+        ...closings.slice(editIndex + 1),
+      ];
+      await UpstashService.saveClosings(newClosings);
+      setClosings(newClosings);
+    }
+
+    message.success("저장되었습니다.");
+    close();
+  };
+
   const init = async () => {
     const _greetings = await UpstashService.greetings();
     setGreetings(_greetings);
@@ -36,28 +102,7 @@ export function Salutes() {
     setClosings(_closings);
   };
 
-  const add = (type: "greeting" | "closing") => async () => {
-    const text = prompt(
-      `추가할 ${type === "greeting" ? "인사말" : "맺음말"}을 입력해주세요.`
-    );
-    if (!text) {
-      return;
-    }
-
-    if (type === "greeting") {
-      const newGreetings = [...greetings, text];
-      await UpstashService.saveGreetings(newGreetings);
-      setGreetings(newGreetings);
-    } else {
-      const newClosings = [...closings, text];
-      await UpstashService.saveClosings(newClosings);
-      setClosings(newClosings);
-    }
-
-    message.success("추가되었습니다.");
-  };
-
-  const remove = (type: "greeting" | "closing") => async (index: number) => {
+  const remove = (type: "greeting" | "closing", index: number) => async () => {
     if (type === "greeting") {
       const newGreetings = greetings.filter((_, i) => i !== index);
       await UpstashService.saveGreetings(newGreetings);
@@ -78,9 +123,23 @@ export function Salutes() {
 
   return (
     <Wrapper>
+      <Modal
+        title="추가/수정"
+        visible={modalState.isOpen}
+        onOk={ok}
+        onCancel={close}
+        okText="저장"
+        cancelText="취소"
+      >
+        <TextArea
+          placeholder="내용을 입력하세요."
+          value={modalState.text}
+          onChange={(e) => handleModalTextChange(e.target.value)}
+        />
+      </Modal>
       <Row>
         <Title level={3}>인사말</Title>
-        <Button onClick={add("greeting")}>추가</Button>
+        <Button onClick={open("greeting")}>추가</Button>
       </Row>
       {greetings.length === 0 && (
         <Alert
@@ -90,13 +149,17 @@ export function Salutes() {
         />
       )}
       {greetings.map((v, i) => (
-        <SaluteCard key={v} onRemove={() => remove("greeting")(i)}>
+        <SaluteCard
+          key={v}
+          onEdit={open("greeting", i)}
+          onRemove={remove("greeting", i)}
+        >
           {v}
         </SaluteCard>
       ))}
       <Row>
         <Title level={3}>맺음말</Title>
-        <Button onClick={add("closing")}>추가</Button>
+        <Button onClick={open("closing")}>추가</Button>
       </Row>
       {closings.length === 0 && (
         <Alert
@@ -106,7 +169,11 @@ export function Salutes() {
         />
       )}
       {closings.map((v, i) => (
-        <SaluteCard key={v} onRemove={() => remove("closing")(i)}>
+        <SaluteCard
+          key={v}
+          onEdit={open("closing", i)}
+          onRemove={remove("closing", i)}
+        >
           {v}
         </SaluteCard>
       ))}
