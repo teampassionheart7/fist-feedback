@@ -69,7 +69,7 @@ class StudioMateService {
     const vips: Member[] = [];
     attenders.forEach((member) => {
       const count = countMap.get(member.id) ?? 0;
-      if (count >= 3 && !vips.find((v) => v.id === member.id)) {
+      if (count + 1 >= 3 && !vips.find((v) => v.id === member.id)) {
         vips.push(member);
         return;
       }
