@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { useRecoilState } from "recoil";
-import { Button, Input, message, Typography } from "antd";
+import { Button, Input, message } from "antd";
 import styled from "styled-components";
 
 import { StudioMateService } from "@/services";
 import { accessTokenState } from "@/store";
-
-const { Title } = Typography;
 
 export function Login() {
   const [_, setAccessToken] = useRecoilState(accessTokenState);
@@ -49,6 +47,11 @@ export function Login() {
         placeholder="스튜디오메이트 PW"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        onKeyUp={(e) => {
+          if (e.key === "Enter") {
+            login();
+          }
+        }}
       />
       <Button type="primary" onClick={login}>
         스튜디오메이트 로그인
