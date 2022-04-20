@@ -44,6 +44,7 @@ export function Login() {
         onChange={(e) => setIdentity(e.target.value)}
       />
       <Input
+        type="password"
         placeholder="스튜디오메이트 PW"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
