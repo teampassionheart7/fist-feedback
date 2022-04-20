@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
+import { message } from "antd";
 
 import { StudioMateService } from "@/services";
 import {
@@ -79,9 +80,48 @@ export const useVipForms = () => {
     );
   };
 
-  const submitAll = async (title: string) => {};
+  const submitAll = async (title: string) => {
+    if (isSubmitting) {
+      return;
+    }
 
-  const submit = async (title: string, memberId: number) => {};
+    setSubmitting(true);
+    for (const form of vipForms) {
+      if (form.submitted || form.submitting) {
+        continue;
+      }
+      if (form.latestMemo.includes(title)) {
+        await submit(title, form.member.id, false);
+      }
+    }
+    setSubmitting(false);
+    message.success("일괄전송되었습니다.");
+  };
+
+  const submit = async (title: string, memberId: number, noti = true) => {
+    setVipForms((prev) =>
+      prev.map((v) =>
+        v.member.id === memberId ? { ...v, submitting: true } : v
+      )
+    );
+    const form = vipForms.find((v) => v.member.id === memberId);
+    await StudioMateService.sendMessage(
+      memberId,
+      title,
+      form.message,
+      accessToken
+    );
+    setVipForms((prev) =>
+      prev.map((v) =>
+        v.member.id === memberId
+          ? { ...v, submitting: false, submitted: true }
+          : v
+      )
+    );
+    if (noti) {
+      message.success(`${form.member.name}쌤 - 전송되었습니다.`);
+    }
+  };
 
   return {
     vipForms,

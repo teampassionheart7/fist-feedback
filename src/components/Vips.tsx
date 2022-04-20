@@ -29,7 +29,7 @@ export function Vips() {
         <Tooltip title="입력한 제목을 메세지가 포함하는 건만 전송합니다.">
           <Button
             onClick={() => submitAll(title)}
-            disabled={!title || !isEmpty || !isLoadingMemo}
+            disabled={!title || isEmpty || isLoadingMemo}
             loading={isSubmitting}
           >
             일괄전송
@@ -93,6 +93,7 @@ export function Vips() {
                     type="primary"
                     disabled={form.submitted}
                     loading={isSubmitting || form.submitting}
+                    onClick={() => submit(title, form.member.id, true)}
                   >
                     {form.submitted ? "전송됨" : "전송"}
                   </Button>
