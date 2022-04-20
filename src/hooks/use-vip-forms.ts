@@ -99,27 +99,37 @@ export const useVipForms = () => {
   };
 
   const submit = async (title: string, memberId: number, noti = true) => {
-    setVipForms((prev) =>
-      prev.map((v) =>
-        v.member.id === memberId ? { ...v, submitting: true } : v
-      )
-    );
-    const form = vipForms.find((v) => v.member.id === memberId);
-    await StudioMateService.sendMessage(
-      memberId,
-      title,
-      form.message,
-      accessToken
-    );
-    setVipForms((prev) =>
-      prev.map((v) =>
-        v.member.id === memberId
-          ? { ...v, submitting: false, submitted: true }
-          : v
-      )
-    );
-    if (noti) {
-      message.success(`${form.member.name}쌤 - 전송되었습니다.`);
+    try {
+      setVipForms((prev) =>
+        prev.map((v) =>
+          v.member.id === memberId ? { ...v, submitting: true } : v
+        )
+      );
+      const form = vipForms.find((v) => v.member.id === memberId);
+      await StudioMateService.sendMessage(
+        memberId,
+        title,
+        form.message,
+        accessToken
+      );
+      setVipForms((prev) =>
+        prev.map((v) =>
+          v.member.id === memberId
+            ? { ...v, submitting: false, submitted: true }
+            : v
+        )
+      );
+      if (noti) {
+        message.success(`${form.member.name}쌤 - 전송되었습니다.`);
+      }
+    } catch {
+      const form = vipForms.find((v) => v.member.id === memberId);
+      message.error(`${form.member.name}쌤 - 전송 실패했습니다.`);
+      setVipForms((prev) =>
+        prev.map((v) =>
+          v.member.id === memberId ? { ...v, submitting: false } : v
+        )
+      );
     }
   };
 
