@@ -25,6 +25,7 @@ export const useVipForms = () => {
   const isLoadingMemo =
     !isEmpty && vipForms.filter((v) => v.latestMemo == null).length > 0;
   const [isSubmitting, setSubmitting] = useState(false);
+  const [memoLoadingMemberId, setMemoLoadingMemberId] = useState<number>(null);
 
   useEffect(() => {
     setVipForms(
@@ -42,16 +43,16 @@ export const useVipForms = () => {
 
   const loadMemos = async (members: Member[]) => {
     for (const member of members) {
-      const memo = await StudioMateService.getLatestMemo(
-        member.id,
-        accessToken!
-      );
-      onLoadMemo(member.id, memo ?? "");
+      await loadMemo(member.id);
     }
   };
 
   /** 메모와, 인사말/맺음말을 조합해 각 메세지를 설정합니다.  */
-  const onLoadMemo = (memberId: number, memo: string) => {
+  const loadMemo = async (memberId: number) => {
+    setMemoLoadingMemberId(memberId);
+    const memo =
+      (await StudioMateService.getLatestMemo(memberId, accessToken!)) ?? "";
+
     const greeting = [...greetings].sort(() => Math.random() - 0.5)[0];
     const closing = [...closings].sort(() => Math.random() - 0.5)[0];
 
@@ -72,6 +73,7 @@ export const useVipForms = () => {
         return v;
       })
     );
+    setMemoLoadingMemberId(null);
   };
 
   const setMessage = (memberId: number, message: string) => {
@@ -137,10 +139,11 @@ export const useVipForms = () => {
     vipForms,
     isEmpty,
     isLoadingMemo,
-    onLoadMemo,
+    loadMemo,
     setMessage,
     submitAll,
     submit,
     isSubmitting,
+    memoLoadingMemberId,
   };
 };

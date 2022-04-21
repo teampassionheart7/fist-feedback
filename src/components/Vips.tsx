@@ -1,5 +1,5 @@
 import { useRecoilState } from "recoil";
-import { Button, Empty, Input, Spin, Tooltip } from "antd";
+import { Button, Empty, Input, message, Spin, Tooltip } from "antd";
 import styled from "styled-components";
 
 import { useVipForms } from "@/hooks";
@@ -15,6 +15,8 @@ export function Vips() {
     submitAll,
     submit,
     isSubmitting,
+    loadMemo,
+    memoLoadingMemberId,
   } = useVipForms();
 
   return (
@@ -76,6 +78,18 @@ export function Vips() {
               <tr key={form.member.id}>
                 <td>{form.member.name}</td>
                 <td>
+                  <Button
+                    disabled={form.submitted || form.submitting}
+                    loading={memoLoadingMemberId === form.member.id}
+                    onClick={async () => {
+                      await loadMemo(form.member.id);
+                      message.success(
+                        `${form.member.name} 회원님의 피드백을 불러왔습니다.`
+                      );
+                    }}
+                  >
+                    다시 불러오기
+                  </Button>
                   <MemoWrapper>{form.latestMemo}</MemoWrapper>
                 </td>
                 <td>
@@ -172,6 +186,7 @@ const SymbolWrapper = styled.div`
 
 const MemoWrapper = styled.div`
   width: 540px;
+  margin-top: 16px;
 
   white-space: pre-wrap;
 `;
