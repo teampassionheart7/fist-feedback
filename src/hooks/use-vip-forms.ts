@@ -134,6 +134,22 @@ export const useVipForms = () => {
     }
   };
 
+  const addMemo = async (memberId: number, text: string) => {
+    await StudioMateService.createMemo(memberId, text, accessToken);
+    await loadMemo(memberId);
+    message.success("메모가 추가되었습니다.");
+  };
+
+  const updateMemo = async (memoId: number, text: string) => {
+    const { ref_id } = await StudioMateService.updateMemo(
+      memoId,
+      text,
+      accessToken
+    );
+    await loadMemo(ref_id);
+    message.success("메모가 수정되었습니다.");
+  };
+
   return {
     vipForms,
     isEmpty,
@@ -144,5 +160,7 @@ export const useVipForms = () => {
     submit,
     isSubmitting,
     memoLoadingMemberId,
+    addMemo,
+    updateMemo,
   };
 };

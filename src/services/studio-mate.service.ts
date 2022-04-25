@@ -134,8 +134,8 @@ class StudioMateService {
     );
   }
 
-  async updateMemo(memoId: number, text: string, token: string) {
-    await axios.patch(
+  async updateMemo(memoId: number, text: string, token: string): Promise<Memo> {
+    const { data } = await axios.patch<Memo>(
       `https://api.studiomate.kr/v2/staff/memo/${memoId}`,
       {
         memo: text,
@@ -146,6 +146,7 @@ class StudioMateService {
         },
       }
     );
+    return data;
   }
 }
 

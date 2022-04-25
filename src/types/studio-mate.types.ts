@@ -8,6 +8,9 @@ export type Lecture = {
 
 export type Member = {
   id: number;
+  /** member_id와 동일 */
+  ref_id: number;
+
   account_id: number;
   account_type: string;
 
