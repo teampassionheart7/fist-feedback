@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useRecoilState } from "recoil";
-import { Button, Empty, Input, message, Spin, Tooltip } from "antd";
+import { Button, Empty, Input, message, Modal, Spin, Tooltip } from "antd";
 import styled from "styled-components";
 
 import { useVipForms } from "@/hooks";
 import { titleState } from "@/store";
+import { Memo } from "@/types";
 
 export function Vips() {
   const [title, setTitle] = useRecoilState(titleState);
@@ -17,7 +19,63 @@ export function Vips() {
     isSubmitting,
     loadMemo,
     memoLoadingMemberId,
+    addMemo,
+    updateMemo,
   } = useVipForms();
+
+  const [modalState, setModalState] = useState<{
+    type: "add" | "edit";
+    memberId: number;
+    editId: number;
+    isOpen: boolean;
+    text: string;
+  }>({
+    type: null,
+    memberId: null,
+    editId: null,
+    isOpen: false,
+    text: null,
+  });
+
+  const open =
+    (type: "add" | "edit", memberId: number, editMemo: Memo) => () => {
+      setModalState({
+        type,
+        isOpen: true,
+        memberId: memberId,
+        editId: editMemo?.id ?? null,
+        text: type === "add" ? "" : editMemo?.memo ?? "",
+      });
+    };
+  const close = () => {
+    setModalState({
+      type: null,
+      isOpen: false,
+      text: null,
+      editId: null,
+      memberId: null,
+    });
+  };
+  const handleModalTextChange = (text: string) => {
+    setModalState((prev) => ({ ...prev, text }));
+  };
+  const ok = async () => {
+    const { type, text } = modalState;
+
+    if (!text) {
+      message.warning("내용을 입력하세요.");
+      return;
+    }
+
+    if (type === "add") {
+      await addMemo(modalState.memberId, text);
+    } else {
+      await updateMemo(modalState.editId, text);
+    }
+
+    message.success("저장되었습니다.");
+    close();
+  };
 
   return (
     <>
@@ -39,6 +97,21 @@ export function Vips() {
           </Button>
         </Tooltip>
       </Row>
+      <Modal
+        title="메모 추가/수정"
+        visible={modalState.isOpen}
+        onOk={ok}
+        onCancel={close}
+        okText="저장"
+        cancelText="취소"
+      >
+        <Input.TextArea
+          placeholder="내용을 입력하세요."
+          value={modalState.text}
+          style={{ height: "240px" }}
+          onChange={(e) => handleModalTextChange(e.target.value)}
+        />
+      </Modal>
       <Table>
         <thead>
           <tr>
@@ -78,18 +151,36 @@ export function Vips() {
               <tr key={form.member.id}>
                 <td>{form.member.name}</td>
                 <td>
-                  <Button
-                    disabled={form.submitted || form.submitting}
-                    loading={memoLoadingMemberId === form.member.id}
-                    onClick={async () => {
-                      await loadMemo(form.member.id);
-                      message.success(
-                        `${form.member.name} 회원님의 피드백을 불러왔습니다.`
-                      );
-                    }}
-                  >
-                    다시 불러오기
-                  </Button>
+                  <Row>
+                    <Button
+                      disabled={form.submitted || form.submitting}
+                      loading={memoLoadingMemberId === form.member.id}
+                      onClick={open("add", form.member.id, form.latestMemo)}
+                    >
+                      추가
+                    </Button>
+                    {form.latestMemo && (
+                      <Button
+                        disabled={form.submitted || form.submitting}
+                        loading={memoLoadingMemberId === form.member.id}
+                        onClick={open("edit", form.member.id, form.latestMemo)}
+                      >
+                        수정
+                      </Button>
+                    )}
+                    <Button
+                      disabled={form.submitted || form.submitting}
+                      loading={memoLoadingMemberId === form.member.id}
+                      onClick={async () => {
+                        await loadMemo(form.member.id);
+                        message.success(
+                          `${form.member.name} 회원님의 피드백을 불러왔습니다.`
+                        );
+                      }}
+                    >
+                      다시 불러오기
+                    </Button>
+                  </Row>
                   <MemoWrapper>{form.latestMemo.memo}</MemoWrapper>
                 </td>
                 <td>
