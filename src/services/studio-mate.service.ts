@@ -116,6 +116,37 @@ class StudioMateService {
       }
     );
   }
+
+  async createMemo(memberId: number, text: string, token: string) {
+    await axios.post(
+      "https://api.studiomate.kr/v2/staff/memo",
+      {
+        attachment: [],
+        memo: text,
+        ref_id: memberId,
+        ref_type: "member",
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  }
+
+  async updateMemo(memoId: number, text: string, token: string) {
+    await axios.patch(
+      `https://api.studiomate.kr/v2/staff/memo/${memoId}`,
+      {
+        memo: text,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  }
 }
 
 export default new StudioMateService();
