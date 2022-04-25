@@ -50,8 +50,7 @@ export const useVipForms = () => {
   /** 메모와, 인사말/맺음말을 조합해 각 메세지를 설정합니다.  */
   const loadMemo = async (memberId: number) => {
     setMemoLoadingMemberId(memberId);
-    const memo =
-      (await StudioMateService.getLatestMemo(memberId, accessToken!)) ?? "";
+    const memo = await StudioMateService.getLatestMemo(memberId, accessToken!);
 
     const greeting = [...greetings].sort(() => Math.random() - 0.5)[0];
     const closing = [...closings].sort(() => Math.random() - 0.5)[0];
@@ -64,7 +63,7 @@ export const useVipForms = () => {
           return {
             ...v,
             latestMemo: memo,
-            message: `${firstname}${greeting}\n\n${memo
+            message: `${firstname}${greeting}\n\n${memo.memo
               .replace(/^(\<\d+월\s.+\s주\s피드백\>\n)/, "")
               .replace(firstname + "\n", "")}\n\n${closing}`,
           };
@@ -92,7 +91,7 @@ export const useVipForms = () => {
       if (form.submitted || form.submitting) {
         continue;
       }
-      if (form.latestMemo.includes(title)) {
+      if (form.latestMemo.memo.includes(title)) {
         await submit(title, form.member.id, false);
       }
     }

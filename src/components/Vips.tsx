@@ -90,14 +90,14 @@ export function Vips() {
                   >
                     다시 불러오기
                   </Button>
-                  <MemoWrapper>{form.latestMemo}</MemoWrapper>
+                  <MemoWrapper>{form.latestMemo.memo}</MemoWrapper>
                 </td>
                 <td>
                   <MessageArea
                     value={form.message}
                     onChange={(e) => setMessage(form.member.id, e.target.value)}
                     style={{
-                      backgroundColor: form.latestMemo.includes(title)
+                      backgroundColor: form.latestMemo.memo.includes(title)
                         ? "#d8f2bd"
                         : "#f0bba8",
                     }}

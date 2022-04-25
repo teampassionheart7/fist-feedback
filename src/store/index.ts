@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 
-import { Member } from "@/types";
+import { Member, Memo } from "@/types";
 
 export const accessTokenState = atom<string | null>({
   key: "accessToken",
@@ -24,7 +24,7 @@ export const vipsState = atom<Member[]>({
 
 type VipForm = {
   member: Member;
-  latestMemo: string;
+  latestMemo: Memo;
   /** 전송될 메세지 */
   message: string;
   submitted: boolean;
