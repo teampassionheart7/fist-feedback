@@ -48,7 +48,7 @@ export type Memo = {
 
   memo: string;
 
-  staff: {
+  staff?: {
     name: string;
     roles: {
       id: number;
@@ -58,4 +58,11 @@ export type Memo = {
       display_name: string;
     }[];
   };
+};
+export const EmptyMemo: Memo = {
+  id: null,
+  created_at: null,
+  updated_at: null,
+  ref_id: null,
+  memo: "(작성된 메모가 없습니다)",
 };

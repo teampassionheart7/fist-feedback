@@ -10,7 +10,7 @@ import {
   closingsState,
   accessTokenState,
 } from "@/store";
-import { Member } from "@/types";
+import { EmptyMemo, Member } from "@/types";
 
 export const useVipForms = () => {
   const accessToken = useRecoilValue(accessTokenState);
@@ -23,7 +23,7 @@ export const useVipForms = () => {
 
   const isEmpty = vipForms.length === 0;
   const isLoadingMemo =
-    !isEmpty && vipForms.filter((v) => v.latestMemo == null).length > 0;
+    !isEmpty && vipForms.filter((v) => v.latestMemo === undefined).length > 0;
   const [isSubmitting, setSubmitting] = useState(false);
   const [memoLoadingMemberId, setMemoLoadingMemberId] = useState<number>(null);
 
@@ -31,7 +31,7 @@ export const useVipForms = () => {
     setVipForms(
       vips.map((v) => ({
         member: v,
-        latestMemo: null,
+        latestMemo: undefined,
         message: null,
         submitted: false,
         submitting: false,
@@ -62,10 +62,12 @@ export const useVipForms = () => {
 
           return {
             ...v,
-            latestMemo: memo,
-            message: `${firstname}${greeting}\n\n${memo.memo
-              .replace(/^(\<\d+월\s.+\s주\s피드백\>\n)/, "")
-              .replace(firstname + "\n", "")}\n\n${closing}`,
+            latestMemo: memo ?? EmptyMemo,
+            message: memo
+              ? `${firstname}${greeting}\n\n${memo.memo
+                  .replace(/^(\<\d+월\s.+\s주\s피드백\>\n)/, "")
+                  .replace(firstname + "\n", "")}\n\n${closing}`
+              : "",
           };
         }
 

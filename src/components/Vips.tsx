@@ -159,7 +159,7 @@ export function Vips() {
                     >
                       추가
                     </Button>
-                    {form.latestMemo && (
+                    {form.latestMemo?.id != null && (
                       <Button
                         disabled={form.submitted || form.submitting}
                         loading={memoLoadingMemberId === form.member.id}
