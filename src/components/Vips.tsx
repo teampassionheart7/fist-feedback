@@ -186,6 +186,16 @@ export function Vips() {
                     >
                       다시 불러오기
                     </Button>
+                    <Button
+                      onClick={() => {
+                        window.open(
+                          `https://fiststudio.studiomate.kr/users/detail?id=${form.member.id}`,
+                          "_blank"
+                        );
+                      }}
+                    >
+                      스튜디오메이트
+                    </Button>
                   </Row>
                   {form.latestMemos.map(({ memo }) => (
                     <MemoWrapper key={memo}>{memo}</MemoWrapper>
