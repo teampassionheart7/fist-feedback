@@ -9,12 +9,18 @@ import {
   greetingsState,
   closingsState,
   accessTokenState,
+  titleState,
 } from "@/store";
-import { EmptyMemo, Member } from "@/types";
+import { Member } from "@/types";
+import {
+  getSubmitableMemo,
+  isSubmitableForm,
+} from "@/helpers/vip-form.helpers";
 
 export const useVipForms = () => {
   const accessToken = useRecoilValue(accessTokenState);
 
+  const title = useRecoilValue(titleState);
   const vips = useRecoilValue(vipsState);
   const greetings = useRecoilValue(greetingsState);
   const closings = useRecoilValue(closingsState);
@@ -23,7 +29,7 @@ export const useVipForms = () => {
 
   const isEmpty = vipForms.length === 0;
   const isLoadingMemo =
-    !isEmpty && vipForms.filter((v) => v.latestMemo === undefined).length > 0;
+    !isEmpty && vipForms.filter((v) => v.latestMemos === undefined).length > 0;
   const [isSubmitting, setSubmitting] = useState(false);
   const [memoLoadingMemberId, setMemoLoadingMemberId] = useState<number>(null);
 
@@ -31,7 +37,7 @@ export const useVipForms = () => {
     setVipForms(
       vips.map((v) => ({
         member: v,
-        latestMemo: undefined,
+        latestMemos: undefined,
         message: null,
         submitted: false,
         submitting: false,
@@ -40,6 +46,40 @@ export const useVipForms = () => {
     loadMemos(vips);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vips.length]);
+
+  useEffect(() => {
+    if (!title?.length) {
+      return;
+    }
+
+    setVipForms((prev) =>
+      prev.map((v) => {
+        const submitableMemo = getSubmitableMemo(v.latestMemos, title);
+        if (submitableMemo != null) {
+          // 원래 제목을 포함하지 않았으나 이제 포함하는 form들에 대해서
+          const greeting = [...greetings].sort(() => Math.random() - 0.5)[0];
+          const closing = [...closings].sort(() => Math.random() - 0.5)[0];
+          const firstname = v.member.name.slice(1);
+
+          return {
+            ...v,
+            message: `${firstname}${greeting}\n\n${submitableMemo.memo
+              .replace(/^(\<\d+월\s.+\s주\s피드백\>\n)/, "")
+              .replace(firstname + "\n", "")}\n\n${closing}`,
+          };
+        }
+        if (submitableMemo == null) {
+          // 원래 제목을 포함했으나 이제 포함하지 않는 경우
+          return {
+            ...v,
+            message: "",
+          };
+        }
+        return v;
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [title]);
 
   const loadMemos = async (members: Member[]) => {
     for (const member of members) {
@@ -50,7 +90,7 @@ export const useVipForms = () => {
   /** 메모와, 인사말/맺음말을 조합해 각 메세지를 설정합니다.  */
   const loadMemo = async (memberId: number) => {
     setMemoLoadingMemberId(memberId);
-    const memo = await StudioMateService.getLatestMemo(memberId, accessToken!);
+    const memos = await StudioMateService.getMemos(memberId, accessToken!);
 
     const greeting = [...greetings].sort(() => Math.random() - 0.5)[0];
     const closing = [...closings].sort(() => Math.random() - 0.5)[0];
@@ -60,11 +100,13 @@ export const useVipForms = () => {
         if (v.member.id === memberId) {
           const firstname = v.member.name.slice(1);
 
+          const submitableMemo = getSubmitableMemo(memos, title);
+
           return {
             ...v,
-            latestMemo: memo ?? EmptyMemo,
-            message: memo
-              ? `${firstname}${greeting}\n\n${memo.memo
+            latestMemos: memos.slice(0, 2),
+            message: submitableMemo
+              ? `${firstname}${greeting}\n\n${submitableMemo.memo
                   .replace(/^(\<\d+월\s.+\s주\s피드백\>\n)/, "")
                   .replace(firstname + "\n", "")}\n\n${closing}`
               : "",
@@ -93,7 +135,7 @@ export const useVipForms = () => {
       if (form.submitted || form.submitting) {
         continue;
       }
-      if (form.latestMemo.memo.includes(title)) {
+      if (isSubmitableForm(form)(title)) {
         await submit(title, form.member.id, false);
       }
     }

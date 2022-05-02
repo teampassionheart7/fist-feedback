@@ -3,6 +3,7 @@ import { useRecoilState } from "recoil";
 import { Button, Empty, Input, message, Modal, Spin, Tooltip } from "antd";
 import styled from "styled-components";
 
+import { isSubmitableForm } from "@/helpers";
 import { useVipForms } from "@/hooks";
 import { titleState } from "@/store";
 import { Memo } from "@/types";
@@ -137,8 +138,9 @@ export function Vips() {
                       <>
                         <Spin size="large" />
                         회원별 최신 메모를 불러오고 있습니다 ... (
-                        {vipForms.filter((v) => v.latestMemo).length} /{" "}
-                        {vipForms.length})
+                        {
+                          vipForms.filter((v) => v.latestMemos != null).length
+                        } / {vipForms.length})
                       </>
                     )}
                   </SymbolWrapper>
@@ -155,15 +157,19 @@ export function Vips() {
                     <Button
                       disabled={form.submitted || form.submitting}
                       loading={memoLoadingMemberId === form.member.id}
-                      onClick={open("add", form.member.id, form.latestMemo)}
+                      onClick={open("add", form.member.id, form.latestMemos[0])}
                     >
                       추가
                     </Button>
-                    {form.latestMemo?.id != null && (
+                    {form.latestMemos?.length > 0 && (
                       <Button
                         disabled={form.submitted || form.submitting}
                         loading={memoLoadingMemberId === form.member.id}
-                        onClick={open("edit", form.member.id, form.latestMemo)}
+                        onClick={open(
+                          "edit",
+                          form.member.id,
+                          form.latestMemos[0]
+                        )}
                       >
                         수정
                       </Button>
@@ -181,14 +187,16 @@ export function Vips() {
                       다시 불러오기
                     </Button>
                   </Row>
-                  <MemoWrapper>{form.latestMemo.memo}</MemoWrapper>
+                  {form.latestMemos.map(({ memo }) => (
+                    <MemoWrapper key={memo}>{memo}</MemoWrapper>
+                  ))}
                 </td>
                 <td>
                   <MessageArea
                     value={form.message}
                     onChange={(e) => setMessage(form.member.id, e.target.value)}
                     style={{
-                      backgroundColor: form.latestMemo.memo.includes(title)
+                      backgroundColor: isSubmitableForm(form)(title)
                         ? "#d8f2bd"
                         : "#f0bba8",
                     }}

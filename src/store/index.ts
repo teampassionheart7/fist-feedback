@@ -22,9 +22,9 @@ export const vipsState = atom<Member[]>({
   default: [],
 });
 
-type VipForm = {
+export type VipForm = {
   member: Member;
-  latestMemo: Memo;
+  latestMemos: Memo[];
   /** 전송될 메세지 */
   message: string;
   submitted: boolean;

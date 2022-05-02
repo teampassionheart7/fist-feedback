@@ -80,7 +80,7 @@ class StudioMateService {
     return vips;
   }
 
-  async getLatestMemo(memberId: number, token: string): Promise<Memo> {
+  async getMemos(memberId: number, token: string): Promise<Memo[]> {
     const { data } = await axios.get<Memo[]>(
       `https://api.studiomate.kr/v2/staff/memo?ref_type=member&ref_id=${memberId}`,
       {
@@ -89,7 +89,7 @@ class StudioMateService {
         },
       }
     );
-    return data.length > 0 ? data.sort((a, b) => b.id - a.id)[0] : null;
+    return data.length > 0 ? data.sort((a, b) => b.id - a.id) : [];
   }
 
   async sendMessage(
