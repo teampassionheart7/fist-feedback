@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { Button, DatePicker, message } from "antd";
+import { Button, DatePicker, Input, message } from "antd";
 import styled from "styled-components";
 import dayjs from "dayjs";
 
@@ -23,6 +24,8 @@ export function DateRange() {
   const [startDate, setStartDate] = useRecoilState(startDateState);
   const [endDate, setEndDate] = useRecoilState(endDateState);
 
+  const [minAttendCount, setMinAttendCount] = useState(3);
+
   const [_, setVips] = useRecoilState(vipsState);
 
   const handleRangeChange = (([start, end]: [string, string]) => {
@@ -40,11 +43,16 @@ export function DateRange() {
       return;
     }
 
-    message.info("입력된 기간 내에 3회 이상 출석한 회원 목록을 가져옵니다.");
+    message.info(
+      `입력된 기간 내에 ${
+        minAttendCount ?? 0
+      }회 이상 출석한 회원 목록을 가져옵니다.`
+    );
     const res = await StudioMateService.getVips(
       startDate!,
       endDate!,
-      accessToken!
+      accessToken!,
+      minAttendCount ?? 0
     );
     setVips(res);
   };
@@ -53,6 +61,14 @@ export function DateRange() {
     <>
       <Row>
         <RangePicker onChange={handleRangeChange} />
+        <Input
+          type="number"
+          placeholder="최소 출석 횟수를 입력해주세요."
+          value={minAttendCount}
+          min={1}
+          onChange={(e) => setMinAttendCount(Number(e.target.value))}
+          style={{ width: "48px" }}
+        />
         <Button type="primary" disabled={!startDate || !endDate} onClick={load}>
           불러오기
         </Button>
