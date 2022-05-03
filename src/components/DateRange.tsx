@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { Button, DatePicker, Input, message } from "antd";
+import { Button, DatePicker, Input, Tooltip, message } from "antd";
 import styled from "styled-components";
 import dayjs from "dayjs";
 
@@ -61,14 +61,15 @@ export function DateRange() {
     <>
       <Row>
         <RangePicker onChange={handleRangeChange} />
-        <Input
-          type="number"
-          placeholder="최소 출석 횟수를 입력해주세요."
-          value={minAttendCount}
-          min={1}
-          onChange={(e) => setMinAttendCount(Number(e.target.value))}
-          style={{ width: "48px" }}
-        />
+        <Tooltip title="최소 출석 횟수를 입력해주세요.">
+          <Input
+            type="number"
+            value={minAttendCount}
+            min={1}
+            onChange={(e) => setMinAttendCount(Number(e.target.value))}
+            style={{ width: "48px" }}
+          />
+        </Tooltip>
         <Button type="primary" disabled={!startDate || !endDate} onClick={load}>
           불러오기
         </Button>
