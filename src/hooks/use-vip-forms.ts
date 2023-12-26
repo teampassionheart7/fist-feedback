@@ -59,7 +59,7 @@ export const useVipForms = () => {
           // 원래 제목을 포함하지 않았으나 이제 포함하는 form들에 대해서
           const greeting = [...greetings].sort(() => Math.random() - 0.5)[0];
           const closing = [...closings].sort(() => Math.random() - 0.5)[0];
-          const firstname = v.member.name.slice(1);
+          const firstname = v.member.profile.name.slice(1);
 
           return {
             ...v,
@@ -98,7 +98,7 @@ export const useVipForms = () => {
     setVipForms((prev) =>
       prev.map((v) => {
         if (v.member.id === memberId) {
-          const firstname = v.member.name.slice(1);
+          const firstname = v.member.profile.name.slice(1);
 
           const submitableMemo = getSubmitableMemo(memos, title);
 
@@ -165,11 +165,11 @@ export const useVipForms = () => {
         )
       );
       if (noti) {
-        message.success(`${form.member.name}쌤 - 전송되었습니다.`);
+        message.success(`${form.member.profile.name}쌤 - 전송되었습니다.`);
       }
     } catch {
       const form = vipForms.find((v) => v.member.id === memberId);
-      message.error(`${form.member.name}쌤 - 전송 실패했습니다.`);
+      message.error(`${form.member.profile.name}쌤 - 전송 실패했습니다.`);
       setVipForms((prev) =>
         prev.map((v) =>
           v.member.id === memberId ? { ...v, submitting: false } : v

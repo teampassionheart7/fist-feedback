@@ -151,7 +151,7 @@ export function Vips() {
             !isLoadingMemo &&
             vipForms.map((form) => (
               <tr key={form.member.id}>
-                <td>{form.member.name}</td>
+                <td>{form.member.profile.name}</td>
                 <td>
                   <Row>
                     <Button
@@ -180,7 +180,7 @@ export function Vips() {
                       onClick={async () => {
                         await loadMemo(form.member.id);
                         message.success(
-                          `${form.member.name} 회원님의 피드백을 불러왔습니다.`
+                          `${form.member.profile.name} 회원님의 피드백을 불러왔습니다.`
                         );
                       }}
                     >

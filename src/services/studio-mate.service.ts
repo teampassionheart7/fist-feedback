@@ -64,7 +64,7 @@ class StudioMateService {
     const attenders = bookings
       .filter((v) => v.status === "attendance")
       .map((v) => v.member)
-      .filter((member) => !member.name.includes("예약회원"));
+      .filter((member) => !member.profile.name.includes("예약회원"));
 
     const countMap = new Map<number, number>();
     const vips: Member[] = [];

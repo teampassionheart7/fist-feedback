@@ -15,7 +15,10 @@ export type Member = {
   account_type: string;
 
   mobile: string;
-  name: string;
+
+  profile: {
+    name: string;
+  };
 };
 
 export type BookingStatus =
