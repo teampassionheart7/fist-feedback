@@ -28,10 +28,11 @@ export function Login() {
       setLoading(true);
       const token = await StudioMateService.login(identity, password);
       setAccessToken(token);
+
+      message.success("스튜디오메이트 로그인이 완료되었습니다.");
     } catch {
       message.error("스튜디오메이트 로그인에 실패했습니다.");
     } finally {
-      message.success("스튜디오메이트 로그인이 완료되었습니다.");
       setLoading(false);
     }
   };
